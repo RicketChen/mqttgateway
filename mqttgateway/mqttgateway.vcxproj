@@ -75,17 +75,20 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\include;$(SolutionDir)mqttgateway\LIB\gcclibopenssl\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\include;$(SolutionDir)mqttgateway\LIB\;$(SolutionDir)mqttgateway\LIB\common\libserial\impl;$(SolutionDir)mqttgateway\LIB\common\libserial;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\include;$(SolutionDir)mqttgateway\LIB\gcclibopenssl\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\include;$(SolutionDir)mqttgateway\LIB\common\;$(IncludePath)</IncludePath>
     <LibraryPath>
     </LibraryPath>
     <SourcePath>$(SolutionDir)mqttgateway\SOURCE;$(SourcePath)</SourcePath>
+    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)</OutDir>
   </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="LIB\common\Serial.cpp" />
-    <ClCompile Include="LIB\common\Stream.cpp" />
-    <ClCompile Include="LIB\common\Timestamp.cpp" />
+    <ClCompile Include="LIB\common\libserial\Serial.cpp" />
+    <ClCompile Include="LIB\common\libserial\Stream.cpp" />
+    <ClCompile Include="LIB\common\libserial\Timestamp.cpp" />
+    <ClCompile Include="LIB\common\sqlite3pp\sqlite3pp.cpp" />
+    <ClCompile Include="LIB\common\sqlite3pp\sqlite3ppext.cpp" />
     <ClCompile Include="SOURCE\main.cpp" />
-    <ClCompile Include="SOURCE\soft_serial.cpp" />
+    <ClCompile Include="SOURCE\soft_mqtt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="LIB\gcc\libmodbus\lib\libmodbus.a" />
@@ -97,9 +100,11 @@
     <Library Include="LIB\gcc\libsqlite3\lib\libsqlite3.a" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LIB\common\Serial.h" />
-    <ClInclude Include="LIB\common\Stream.h" />
-    <ClInclude Include="LIB\common\Timestamp.h" />
+    <ClInclude Include="LIB\common\libserial\Serial.h" />
+    <ClInclude Include="LIB\common\libserial\Stream.h" />
+    <ClInclude Include="LIB\common\libserial\Timestamp.h" />
+    <ClInclude Include="LIB\common\sqlite3pp\sqlite3pp.h" />
+    <ClInclude Include="LIB\common\sqlite3pp\sqlite3ppext.h" />
     <ClInclude Include="LIB\gcc\libmodbus\include\modbus\modbus-rtu.h" />
     <ClInclude Include="LIB\gcc\libmodbus\include\modbus\modbus-tcp.h" />
     <ClInclude Include="LIB\gcc\libmodbus\include\modbus\modbus-version.h" />
@@ -208,11 +213,14 @@
     <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\will_options.h" />
     <ClInclude Include="LIB\gcc\libsqlite3\include\sqlite3.h" />
     <ClInclude Include="LIB\gcc\libsqlite3\include\sqlite3ext.h" />
-    <ClInclude Include="SOURCE\soft_serial.h" />
+    <ClInclude Include="SOURCE\soft_mqtt.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\EDZ\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\StartMenu\Visual Studio 2017.lnk" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <LibraryDependencies>modbus;dl;ssl;crypto;sqlite3;pthread</LibraryDependencies>
+      <LibraryDependencies>modbus;dl;ssl;crypto;paho-mqtt3a-static;paho-mqtt3c-static;paho-mqttpp3;sqlite3;pthread</LibraryDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\lib;$(SolutionDir)mqttgateway\LIB\gcc\libopenssl\lib;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\lib;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

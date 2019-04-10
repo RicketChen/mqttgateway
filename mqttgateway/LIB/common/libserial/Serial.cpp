@@ -8,11 +8,23 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <thread>
-Serial::Serial() :stream()
+#include "sqlite3pp/sqlite3pp.h"
+#include "sqlite3pp/sqlite3ppext.h"
+int test0()
+{
+	return 100;
+}
+Serial::Serial(char* dev) :stream()
+{
+	printf("create database");
+	open(dev, 115200, 8, 'N', 1);
+	
+	pthread_mutex_init(&mutex, 0);
+}
+Serial::Serial() : stream()
 {
 	pthread_mutex_init(&mutex, 0);
 }
-
 Serial::~Serial()
 {
 	close();
@@ -25,59 +37,182 @@ void* receiveThread(void* arg)
 	printf("%s\n", "created thread to read serial");
 	while (true)
 	{
-	//	pthread_testcancel();
+		pthread_testcancel();
 		int len = read(serial->fd, buf, sizeof(buf));
 		if (len > 0)
 		{
-			printf("receive data,len is %d", len);
 			pthread_mutex_lock(&(serial->mutex));
 			serial->stream.append(buf, len);
 			pthread_mutex_unlock(&(serial->mutex));
+		//	printf("receive data is %s\n", buf);
+		//	memset(buf, 0, sizeof(buf));
 		}
-		sleep(1);
-		printf("%s\n", "ready to receive");
+		usleep(1000);
 	}
 }
 
-int Serial::open(const char* dev, int baud, int dataBits, int parityMode, int stopBits)
+int Serial::open(const char* dev, int baud, int dataBits, char parityMode, int stopBits)
 {
-	struct termios options;
-	bzero(&options, sizeof(options));
-	int baudT = transformBaud(baud);
-	if (baudT < 0)
-		return BAUD_NOT_SUPPORTED;
-	cfsetispeed(&options, baudT);
-	cfsetospeed(&options, baudT);
-	int dataBitsT = transformDataBits(dataBits);
-	if (dataBitsT < 0)
-		return DATABITS_NOT_SUPPORTED;
-	options.c_cflag |= dataBitsT;
-	if (parityMode == PARITY_ODD)
-	{
-		options.c_cflag |= PARENB;
-		options.c_cflag |= PARODD;
-	}
-	else if (parityMode == PARITY_EVEN)
-		options.c_cflag |= PARENB;
-	else if (parityMode != PARITY_NONE)
-		return PARITYMODE_NOT_SUPPORTED;
-	if (stopBits == 2)
-		options.c_cflag |= CSTOPB;
-	else if (stopBits != 1)
-		return STOPBITS_NOT_SUPPORTED;
-	options.c_cc[VTIME] = 0;
-	options.c_cc[VMIN] = 0;
-	tcflush(0, TCIOFLUSH);
-	fd = ::open(dev, O_RDWR | O_NOCTTY | O_NDELAY);
+
+	fd = ::open(dev, O_RDWR, O_NOCTTY | O_NONBLOCK);
 	if (fd < 0)
+	{
+		printf("open serial port fail!\n");
 		return DEV_NOT_FOUND;
-	if (tcsetattr(fd, TCSANOW, &options))
+	}
+	struct termios newtio;
+
+	memset(&newtio, 0, sizeof(newtio));
+
+	newtio.c_cflag |= CLOCAL | CREAD;
+	newtio.c_cflag &= ~CSIZE;
+
+	//设置波特率。
+	int baudspeed = transformBaud(baud);
+	if (baudspeed < 0)
+	{
+		printf("Unsupport baud!\n");
+		return BAUD_NOT_SUPPORTED;
+	}
+	cfsetispeed(&newtio, baudspeed);
+	cfsetospeed(&newtio, baudspeed);
+
+	int databits = transformDataBits(dataBits);
+	if (databits < 0)
+	{
+		printf("Unsupport databits!\n");
+		return DATABITS_NOT_SUPPORTED;
+	}
+	newtio.c_cflag |= databits;
+	//设置波特率。
+/*	switch (baud)
+	{
+		case 2400:
+		{
+			cfsetispeed(&newtio, B2400);
+			cfsetospeed(&newtio, B2400);
+			break;
+		}
+		case 4800:
+		{
+			cfsetispeed(&newtio, B4800);
+			cfsetospeed(&newtio, B4800);
+			break;
+		}
+		case 9600:
+		{
+			cfsetispeed(&newtio, B9600);
+			cfsetospeed(&newtio, B9600);
+			break; 
+		}
+		case 19200:
+		{
+			cfsetispeed(&newtio, B19200);
+			cfsetospeed(&newtio, B19200);
+			break;
+		}
+		case 38400:
+		{
+			cfsetispeed(&newtio, B38400);
+			cfsetospeed(&newtio, B38400);
+			break;
+		}
+		case 115200:
+		{
+			cfsetispeed(&newtio, B115200);
+			cfsetospeed(&newtio, B115200);
+			break;
+		}
+		default:
+		{
+			printf("Unsupport baud!\n");
+			return BAUD_NOT_SUPPORTED;
+		}
+	}
+	
+	//设置数据位，只支持7，8
+	switch (dataBits)
+	{
+		case 7:
+		{
+			newtio.c_cflag |= CS7;
+			break;
+		}
+		case 8:
+		{
+			newtio.c_cflag |= CS8;
+			break;
+		}
+		default:
+		{
+			printf("Unsupported Data_bits\n");
+			return DATABITS_NOT_SUPPORTED;
+		}
+	}*/
+
+	//设置校验位
+	switch (parityMode)
+	{
+		case 'N':
+		{
+			newtio.c_cflag &= ~PARENB;
+			newtio.c_iflag &= ~INPCK;
+			break;
+		}
+		case 'O':
+		{
+			newtio.c_cflag |= (PARODD | PARENB);
+			newtio.c_iflag |= INPCK;
+			break;
+		}
+		case 'E':
+		{
+			newtio.c_cflag |= PARENB;
+			newtio.c_cflag &= ~PARODD;
+			newtio.c_iflag |= INPCK;
+			break;
+		}
+		default:
+		{	printf("Unsupported Parity.\n");
+			return PARITYMODE_NOT_SUPPORTED;
+		}
+	}
+
+	//设置停止位，值为1 or 2
+	switch (stopBits)
+	{
+		case 1:
+		{
+			newtio.c_cflag &= ~CSTOPB;
+			break;
+		}
+		case 2:
+		{
+			newtio.c_cflag |= CSTOPB;
+			break;
+		}
+		default:
+		{
+			printf("Unsupported Stop_bits.\n");
+			return STOPBITS_NOT_SUPPORTED;
+		}
+
+	}
+	//刷清输入和输出队列
+	tcflush(0, TCIOFLUSH);
+	//激活配置，TCSANOW表示更改后立即生效。
+	if ((tcsetattr(fd, TCSANOW, &newtio)) != 0)
+	{
+		//判断是否激活成功。
+		printf("Com set error\n");
 		return CONFIG_FAIL;
-	if (tcflush(fd, TCIOFLUSH))
-		return CONFIG_FAIL;
+	}
 //	std::thread th(receiveThread, this);
 	if (pthread_create(&tid, 0, receiveThread, this) != 0)
+	{
+		printf("created thread fail!\n");
 		return NEW_THREAD_FAIL;
+	}
 	return OK;
 }
 

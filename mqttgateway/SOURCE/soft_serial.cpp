@@ -1,5 +1,4 @@
 #include "soft_serial.h"
-#include "serial.h"
 #include <iostream>
 #include <string>
 #include <thread>
