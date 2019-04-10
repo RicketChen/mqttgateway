@@ -3,8 +3,6 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
-#include <cctype>
-#include <thread>
 #include <chrono>
 #include <unistd.h>
 
@@ -18,25 +16,29 @@
 #include "libserial/Serial.h"
 #include "sqlite3pp/sqlite3pp.h"
 #include "soft_mqtt.h"
-#include "mqtt/async_client.h"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/rapidjson.h"
 
 using std::cout;
 using std::endl;
 using std::string;
 typedef struct _ConnectInfo_t {
 	char location[100] = "cn-shanghai";
-	char url[500] = "tcp://a1D8ZmAY7J6.iot-as-mqtt.cn-shanghai.aliyuncs.com:1883";
-//	char url[100] = "192.168.43.128:1883";
+
+	char url[100] = "";
 	char port[10] = "1883";
-	char productkey[500] = "a1D8ZmAY7J6";
-	char devicename[500] = "uRiD38Mfbp2mwjocOPrX";
-	char devicesecret[500] = "naEe4i0gmyW7nXqYOBAxBSKKnc0PLNdB";
-	char username[500] = "uRiD38Mfbp2mwjocOPrX&a1D8ZmAY7J6";
+	char productkey[100] = "a1D8ZmAY7J6";
+	char devicename[100] = "abcd";
+	char devicesecret[100] = "fFbESw05SaEJ3Jo0p9I0wAzmxZ2uWaCv";
+	char username[100] = "";
 	char password[100] = "";
 	char clientid[100] = "test";
-	char securemode[500] = "securemode=3";
-	char signmethod[500] = "signmethod=hmacsha1";
-	char mqttclientid[500] = "test|securemode=3,signmethod=hmacsha1|";
+	char securemode[20] = "securemode=";
+	char signmethod[20] = "signmethod=";
+	char* hmacmd5 = "hmacmd5";
+	char* hmacsha1 = "hmacsha1";
+	char mqttclientid[100] = "";
 }ConnectInfo_t;
 static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
 	unsigned int *ecx, unsigned int *edx)
@@ -53,6 +55,23 @@ int main(int argc, char* argv[])
 {
 	ConnectInfo_t connectinfo;
 
+	sprintf(connectinfo.url, "tcp://%s.iot-as-mqtt.%s.aliyuncs.com", connectinfo.productkey, connectinfo.location);
+	sprintf(connectinfo.username, "%s&%s", connectinfo.devicename, connectinfo.productkey);
+	sprintf(connectinfo.mqttclientid, "%s|%s%c,%s%s|", connectinfo.clientid, connectinfo.securemode, '3', connectinfo.signmethod, connectinfo.hmacsha1);
+
+	cout << "url is " << connectinfo.url << endl << "username is " << connectinfo.username << endl << "clientid is " << connectinfo.mqttclientid << endl;
+/**********************************²âÊÔrapidjson************************************/
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	writer.StartObject();
+	writer.Key("test");
+	writer.String("json");
+	writer.EndObject();
+	cout << buffer.GetString();
+/**********************************²âÊÔrapidjson************************************/
+
+
+/***********************************¶ÁÈ¡cpuid**************************************/
 	char cpuid[100];
 	FILE* fp_cpuId = popen("sudo cat /sys/class/dmi/id/board_serial", "r");
 
@@ -69,17 +88,22 @@ int main(int argc, char* argv[])
 		Pentium III */
 	printf("serial number 0x%08x%08x\n", edx, ecx);
 
-//	Serial s("/dev/ttyS0");
-	//²âÊÔopen()
-//	if (s.open("/dev/ttyS0", 115200, 8,'N', 1) != Serial::OK)
-	{
-//		printf("Cannot open serial port!\n");
-//		return -1;
-	}
-	//²âÊÔwriteºÍint read(char* buf,int len,int timeout);
+/***********************************¶ÁÈ¡cpuid**************************************/
 
-	// The key to hash
-	char key[100] = { "123" };
+/***********************************²âÊÔ´®¿Ú**************************************/
+/*	Serial s;
+	if (s.open("/dev/ttyS0", 115200, 8,'N', 1) != Serial::OK)
+	{
+		printf("Cannot open serial port!\n");
+		return -1;
+	}
+	char test[] = "test data";
+	s.write(test, strlen(test));
+	s.close();*/
+/***********************************²âÊÔ´®¿Ú**************************************/
+
+/***********************************ÃÜÔ¿¼ÆËã**************************************/
+
 
 	// The data that we're going to hash using HMAC
 	char data[100] = {0};
@@ -97,16 +121,16 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < 20; i++)
 		sprintf(&mdString[i * 2], "%02x", (unsigned int)digest[i]);
 	strcpy(connectinfo.password, mdString);
-	printf("HMAC digest: %s\n", mdString);
-/*	modbus_t *mb;
+
+/***********************************ÃÜÔ¿¼ÆËã**************************************/
+
+
+/***********************************modbus²âÊÔ**************************************/
+	modbus_t *mb;
 	mb = modbus_new_rtu("/dev/ttyS0",115200,'N',8,1);
 	modbus_set_slave(mb, 1);
 	modbus_set_debug(mb, 1);
 	modbus_connect(mb);
-//	struct timeval t;
-//	t.tv_sec = 0;
-//	t.tv_usec = 1000000;//1000ms
-//	modbus_set_response_timeout(mb, &t);
 
 //	while (1);
 	uint16_t buff[10];
@@ -115,9 +139,9 @@ int main(int argc, char* argv[])
 	{
 		cout << buff[i] << endl;
 	}
-	cout << "finsh" << endl;*/
-
-	MyMqtt test;
-	test.connect(connectinfo.url, connectinfo.mqttclientid,connectinfo.username,connectinfo.password);
+/***********************************modbus²âÊÔ**************************************/
+	
+	MyMqtt mqtttest;
+	mqtttest.connect(connectinfo.url, connectinfo.mqttclientid, connectinfo.username, connectinfo.password);
 	return 0;
 }

@@ -75,7 +75,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\include;$(SolutionDir)mqttgateway\LIB\gcclibopenssl\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\include;$(SolutionDir)mqttgateway\LIB\common\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\include;$(SolutionDir)mqttgateway\LIB\gcc\libopenssl\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\include;$(SolutionDir)mqttgateway\LIB\common\;$(IncludePath)</IncludePath>
     <LibraryPath>
     </LibraryPath>
     <SourcePath>$(SolutionDir)mqttgateway\SOURCE;$(SourcePath)</SourcePath>
@@ -103,6 +103,42 @@
     <ClInclude Include="LIB\common\libserial\Serial.h" />
     <ClInclude Include="LIB\common\libserial\Stream.h" />
     <ClInclude Include="LIB\common\libserial\Timestamp.h" />
+    <ClInclude Include="LIB\common\rapidjson\allocators.h" />
+    <ClInclude Include="LIB\common\rapidjson\cursorstreamwrapper.h" />
+    <ClInclude Include="LIB\common\rapidjson\document.h" />
+    <ClInclude Include="LIB\common\rapidjson\encodedstream.h" />
+    <ClInclude Include="LIB\common\rapidjson\encodings.h" />
+    <ClInclude Include="LIB\common\rapidjson\error\en.h" />
+    <ClInclude Include="LIB\common\rapidjson\error\error.h" />
+    <ClInclude Include="LIB\common\rapidjson\filereadstream.h" />
+    <ClInclude Include="LIB\common\rapidjson\filewritestream.h" />
+    <ClInclude Include="LIB\common\rapidjson\fwd.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\itoa.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\meta.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\pow10.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\regex.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\stack.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\strtod.h" />
+    <ClInclude Include="LIB\common\rapidjson\internal\swap.h" />
+    <ClInclude Include="LIB\common\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="LIB\common\rapidjson\memorybuffer.h" />
+    <ClInclude Include="LIB\common\rapidjson\memorystream.h" />
+    <ClInclude Include="LIB\common\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="LIB\common\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="LIB\common\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="LIB\common\rapidjson\pointer.h" />
+    <ClInclude Include="LIB\common\rapidjson\prettywriter.h" />
+    <ClInclude Include="LIB\common\rapidjson\rapidjson.h" />
+    <ClInclude Include="LIB\common\rapidjson\reader.h" />
+    <ClInclude Include="LIB\common\rapidjson\schema.h" />
+    <ClInclude Include="LIB\common\rapidjson\stream.h" />
+    <ClInclude Include="LIB\common\rapidjson\stringbuffer.h" />
+    <ClInclude Include="LIB\common\rapidjson\writer.h" />
     <ClInclude Include="LIB\common\sqlite3pp\sqlite3pp.h" />
     <ClInclude Include="LIB\common\sqlite3pp\sqlite3ppext.h" />
     <ClInclude Include="LIB\gcc\libmodbus\include\modbus\modbus-rtu.h" />
@@ -214,9 +250,6 @@
     <ClInclude Include="LIB\gcc\libsqlite3\include\sqlite3.h" />
     <ClInclude Include="LIB\gcc\libsqlite3\include\sqlite3ext.h" />
     <ClInclude Include="SOURCE\soft_mqtt.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="C:\Users\EDZ\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\StartMenu\Visual Studio 2017.lnk" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>

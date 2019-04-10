@@ -147,16 +147,14 @@ int MyMqtt::connect(char* ipaddress, char* clientid,char* username,char* passwor
 	connOpts.set_user_name(username);
 	connOpts.set_password(password);
 
-	async_client client(ipaddress, clientid,"NULL");
+	async_client client(ipaddress, clientid);
 
 	callbackmqtt cb(client, connOpts);
 	client.set_callback(cb);
 
 	// Start the connection.
 	// When completed, the callback will subscribe to topic.
-	cout << "username is " << connOpts.get_user_name() << endl << \
-		"password is " << connOpts.get_password() << endl;
-	cout << "clientid is " << clientid << endl << "url is " << ipaddress << endl;
+
  	try {
 		std::cout << "Connecting to the MQTT server..." << std::flush;
 		client.connect(connOpts, nullptr, cb);
