@@ -29,11 +29,11 @@ typedef struct _ConnectInfo_t {
 	char url[100] = "";
 	char port[10] = "1883";
 	char productkey[100] = "a1D8ZmAY7J6";
-	char devicename[100] = "abcd";
-	char devicesecret[100] = "fFbESw05SaEJ3Jo0p9I0wAzmxZ2uWaCv";
+	char devicename[100] = "uRiD38Mfbp2mwjocOPrX";
+	char devicesecret[100] = "naEe4i0gmyW7nXqYOBAxBSKKnc0PLNdB";
 	char username[100] = "";
 	char password[100] = "";
-	char clientid[100] = "test";
+	char clientid[100] = "uRiD38Mfbp2mwjocOPrX&a1D8ZmAY7J6|securemode=3,signmethod=hmacsha1,timestamp=132323232|";
 	char securemode[20] = "securemode=";
 	char signmethod[20] = "signmethod=";
 	char* hmacmd5 = "hmacmd5";
@@ -104,13 +104,12 @@ int main(int argc, char* argv[])
 
 /***********************************√‹‘øº∆À„**************************************/
 
-
 	// The data that we're going to hash using HMAC
 	char data[100] = {0};
 	unsigned char digest[EVP_MAX_MD_SIZE] = { '\0' };
 	unsigned int digest_len = 0;
-	sprintf(data, "clientId%sdeviceName%sproductKey%s", connectinfo.clientid, connectinfo.devicename, connectinfo.productkey);
-
+//	sprintf(data, "clientId%sdeviceName%sproductKey%s", connectinfo.clientid, connectinfo.devicename, connectinfo.productkey);
+	strcpy(data, connectinfo.mqttclientid);
 	// Using sha1 hash engine here.
 	// You may use other hash engines. e.g EVP_md5(), EVP_sha224, EVP_sha512, etc
 	HMAC(EVP_sha1(), connectinfo.devicesecret, strlen(connectinfo.devicesecret), (unsigned char*)data, strlen(data), digest, &digest_len);
@@ -132,7 +131,6 @@ int main(int argc, char* argv[])
 	modbus_set_debug(mb, 1);
 	modbus_connect(mb);
 
-//	while (1);
 	uint16_t buff[10];
 	int regs = modbus_read_registers(mb, 0, 10, buff);
 	for (int i = 0; i < 10; i++)
