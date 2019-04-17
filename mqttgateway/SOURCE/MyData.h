@@ -5,7 +5,7 @@
 typedef struct _DeviceInfo_t {
 	int id;					//devinfo id
 	int PortId;				//绑定的PortId
-	int adress;				//设备地址
+	int address;				//设备地址
 	int regedian;			//设备大小端
 	int byteorder;			//设备寄存器高低位
 	char DeviceName[100];	//设备名
@@ -15,6 +15,7 @@ typedef struct _DeviceInfo_t {
 typedef struct _PortInfo_t {
 	int id;					//Portinfo id
 	int PortId;				//设定的PortId
+	int PortNum;
 	int PortType;			//端口类型
 	int baud;				//波特率
 	char Parity[10];		//奇偶位
@@ -31,6 +32,7 @@ typedef struct _ThemeCtrl_t {
 	int MqttId;				//绑定的MqttId
 	int	QosPub;				//"发布"主题的Qos
 	int QosSub;				//"订阅"主题的Qos
+	char proto[10];
 	char CtrlName[100];		//控制主题的命名
 	char CtrlPub[100];		//发布的主题
 	char CtrlSub[100];		//订阅的主题
@@ -72,23 +74,41 @@ typedef struct _VarParam_t {
 	int PortId;				//绑定的串口Id
 	int DevId;				//绑定的设备Id
 	float modules;			//转换系数
+
+	int VarCount;		//变量的数量
 }VarParam_t;
 
 typedef struct _ConnectInfo_t {
 	int id;
-	int mqttid;
-	char url[100] = "";
-	char productkey[100] = "";
-	char devicename[100] = "";
-	char devicesecret[100] = "";
-	char username[100] = "";
-	char password[100] = "";
-	char clientid[100] = "";
-	char securemode[20] = "";
-	char signmethod[20] = "";
-	char* hmacmd5 = "";
-	char* hmacsha1 = "";
+	int Session;
+	int Enable;
+	int KeepAlive;
+	int ServerPort;
+
+	char ClientId[100];
+	char UserName[100];
+	char Password[100];
+	int PeriodDef;
+	int EnableDef;
+	char TopicDef[100];
+	int QosDef;
+	int EnableAlarm;
+	int QosAlarm;
+	char TopicAlarm[100];
+
+	char ServerLink[100];
+	char MqttName[100];
+
+	int MqttCount;
+	
 }ConnectInfo_t;
 
-extern ConnectInfo_t MqttInfo[100];
+extern ConnectInfo_t MqttInfo[10];
+extern DeviceInfo_t DevInfo[10];
+extern PortInfo_t PortInfo[10];
+extern ThemeCtrl_t ThemeCtrl[10];
+extern ThemeUpload_t ThemeUpload[10];
+extern ThemeUploadList_t ThemeUploadList[100];
+extern VarParam_t VarParam[100];
+
 #endif // !_MY_DATA_H_
