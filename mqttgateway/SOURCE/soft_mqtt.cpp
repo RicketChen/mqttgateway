@@ -106,7 +106,7 @@ void event_handle(void* pcontext, void* pclient, iotx_mqtt_event_msg_pt msg)
  *  to its /${productKey}/${deviceName}/get for successfully running whole example
  */
 
-int mqtt_connect(char* host,int port,char* clientid,char* username,char* password)
+int MyMqtt::mqtt_connect(char* host,int port,char* clientid,char* username,char* password)
 {
 	void* pclient = NULL;
 	int                     res = 0;

@@ -5,6 +5,7 @@
 #include <cstring>
 #include <chrono>
 #include <unistd.h>
+#include <thread>
 
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -34,7 +35,14 @@
 using std::cout;
 using std::endl;
 using std::string;
-ConnectInfo_t MqttInfo[100];
+
+ConnectInfo_t MqttInfo[10];
+DeviceInfo_t DevInfo[10];
+PortInfo_t PortInfo[10];
+ThemeCtrl_t ThemeCtrl[10];
+ThemeUpload_t ThemeUpload[10];
+ThemeUploadList_t ThemeUploadList[100];
+VarParam_t VarParam[100];
 
 static inline void native_cpuid(unsigned int* eax, unsigned int* ebx,
 	unsigned int* ecx, unsigned int* edx)
@@ -49,11 +57,17 @@ static inline void native_cpuid(unsigned int* eax, unsigned int* ebx,
 }
 
 int main(int argc, char* argv[])
-{	mqtt_connect("a1D8ZmAY7J6.iot-as-mqtt.cn-shanghai.aliyuncs.com",1883, "clientid|securemode=3,signmethod=hmacsha1|","uRiD38Mfbp2mwjocOPrX&a1D8ZmAY7J6","833CFFC0315466986F5E4B3F051A22A5A1E98435");
+{
+	mqtt_connect("a1D8ZmAY7J6.iot-as-mqtt.cn-shanghai.aliyuncs.com",1883, "clientid|securemode=3,signmethod=hmacsha1|","uRiD38Mfbp2mwjocOPrX&a1D8ZmAY7J6","833CFFC0315466986F5E4B3F051A22A5A1E98435");
 
 	MySqlite db("test.conf");
-	db.GetCountFromTable("VarParam");
-
+//	db.GetCountFromTable("VarParam");
+	db.GetAllInfo();
+	for (int i = 0; i < MqttInfo[0].MqttCount; i++)
+	{
+	///	mqtt_connect(MqttParam[i]);
+	}
+//	while (1);
 /**********************************≤‚ ‘rapidjson************************************/
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -133,9 +147,5 @@ int main(int argc, char* argv[])
 	}*/
 /***********************************modbus≤‚ ‘**************************************/
 
-//	mqttc(MqttInfo[0].url, MqttInfo[0].clientid, MqttInfo[0].username, MqttInfo[0].password);
-
-//	MyMqtt mqtttest;
-//	mqtttest.connect(connectinfo.url, connectinfo.mqttclientid, connectinfo.username, connectinfo.password);
 	return 0;
 }
