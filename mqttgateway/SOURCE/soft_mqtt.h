@@ -1,15 +1,7 @@
 #pragma once
-#ifndef _SOFT_MQTT_H_
+#ifndef _SOFT_MQTT_H
 #define _SOFT_MQTT_H_
 
-class MyMqtt
-{
-public:
-	MyMqtt();
-	~MyMqtt();
-	int connect(char* ipaddress,char* clientid,char* username,char* password);
-private:
 
-};
-
-#endif // !_SOFT_MQTT_H_
+int mqtt_connect(char* host,int port, char* clientid, char* username, char* password);
+#endif

@@ -75,11 +75,12 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\include;$(SolutionDir)mqttgateway\LIB\gcc\libopenssl\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\include;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\include;$(SolutionDir)mqttgateway\LIB\common\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\include;$(SolutionDir)mqttgateway\LIB\gcc\libopenssl\include;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\include;$(SolutionDir)mqttgateway\LIB\common\;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-c\include;$(SolutionDir)mqttgateway\LIB\gcc\libaliyun\include;$(SolutionDir)mqttgateway\LIB\gcc\libaliyun\include\dev_model;$(SolutionDir)mqttgateway\LIB\gcc\libaliyun\include\dev_sign;$(SolutionDir)mqttgateway\LIB\gcc\libaliyun\include\infra;$(SolutionDir)mqttgateway\LIB\gcc\libaliyun\include\mqtt;$(SolutionDir)mqttgateway\LIB\gcc\libaliyun\include\wrappers;$(IncludePath)</IncludePath>
     <LibraryPath>
     </LibraryPath>
     <SourcePath>$(SolutionDir)mqttgateway\SOURCE;$(SourcePath)</SourcePath>
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)</OutDir>
+    <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="LIB\common\libserial\Serial.cpp" />
@@ -89,14 +90,15 @@
     <ClCompile Include="LIB\common\sqlite3pp\sqlite3ppext.cpp" />
     <ClCompile Include="SOURCE\main.cpp" />
     <ClCompile Include="SOURCE\soft_mqtt.cpp" />
+    <ClCompile Include="SOURCE\soft_sqlite3pp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="LIB\gcc\libaliyun\lib\libiot_hal.a" />
+    <Library Include="LIB\gcc\libaliyun\lib\libiot_sdk.a" />
+    <Library Include="LIB\gcc\libaliyun\lib\libiot_tls.a" />
     <Library Include="LIB\gcc\libmodbus\lib\libmodbus.a" />
     <Library Include="LIB\gcc\libopenssl\lib\libcrypto.a" />
     <Library Include="LIB\gcc\libopenssl\lib\libssl.a" />
-    <Library Include="LIB\gcc\libpaho-mqtt-cpp\lib\libpaho-mqtt3a-static.a" />
-    <Library Include="LIB\gcc\libpaho-mqtt-cpp\lib\libpaho-mqtt3c-static.a" />
-    <Library Include="LIB\gcc\libpaho-mqtt-cpp\lib\libpaho-mqttpp3.a" />
     <Library Include="LIB\gcc\libsqlite3\lib\libsqlite3.a" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +143,24 @@
     <ClInclude Include="LIB\common\rapidjson\writer.h" />
     <ClInclude Include="LIB\common\sqlite3pp\sqlite3pp.h" />
     <ClInclude Include="LIB\common\sqlite3pp\sqlite3ppext.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\dev_sign_api.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\dev_sign_config.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\dev_sign_internal.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\dev_sign_wrapper.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_compat.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_config.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_defs.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_list.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_log.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_net.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_report.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_sha256.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_string.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_timer.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\infra_types.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\mqtt_api.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\mqtt_wrapper.h" />
+    <ClInclude Include="LIB\gcc\libaliyun\include\wrappers_defs.h" />
     <ClInclude Include="LIB\gcc\libmodbus\include\modbus\modbus-rtu.h" />
     <ClInclude Include="LIB\gcc\libmodbus\include\modbus\modbus-tcp.h" />
     <ClInclude Include="LIB\gcc\libmodbus\include\modbus\modbus-version.h" />
@@ -220,42 +240,19 @@
     <ClInclude Include="LIB\gcc\libopenssl\include\openssl\x509.h" />
     <ClInclude Include="LIB\gcc\libopenssl\include\openssl\x509v3.h" />
     <ClInclude Include="LIB\gcc\libopenssl\include\openssl\x509_vfy.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\include\MQTTAsync.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\include\MQTTClientPersistence.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\include\MQTTPersistence.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\include\MQTTProperties.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\include\MQTTReasonCodes.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\include\MQTTSubscribeOpts.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\async_client.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\buffer_ref.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\buffer_view.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\callback.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\client.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\connect_options.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\delivery_token.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\disconnect_options.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\exception.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\iaction_listener.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\iasync_client.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\iclient_persistence.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\message.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\response_options.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\ssl_options.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\string_collection.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\thread_queue.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\token.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\topic.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\types.h" />
-    <ClInclude Include="LIB\gcc\libpaho-mqtt-cpp\mqtt\will_options.h" />
     <ClInclude Include="LIB\gcc\libsqlite3\include\sqlite3.h" />
     <ClInclude Include="LIB\gcc\libsqlite3\include\sqlite3ext.h" />
+    <ClInclude Include="SOURCE\MyData.h" />
     <ClInclude Include="SOURCE\soft_mqtt.h" />
+    <ClInclude Include="SOURCE\soft_sqlite3pp.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <LibraryDependencies>modbus;dl;ssl;crypto;paho-mqtt3a-static;paho-mqtt3c-static;paho-mqttpp3;sqlite3;pthread</LibraryDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\lib;$(SolutionDir)mqttgateway\LIB\gcc\libopenssl\lib;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-cpp\lib;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\lib</AdditionalLibraryDirectories>
+      <LibraryDependencies>modbus;dl;ssl;crypto;sqlite3;iot_hal;iot_sdk;iot_tls;rt;pthread</LibraryDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\lib;$(SolutionDir)mqttgateway\LIB\gcc\libopenssl\lib;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\lib;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-c\lib;$(SolutionDir)mqttgateway\LIB\gcc\libaliyun\lib</AdditionalLibraryDirectories>
+      <AdditionalOptions>-no-pie</AdditionalOptions>
     </Link>
+    <ClCompile />
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

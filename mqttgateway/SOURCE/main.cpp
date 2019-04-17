@@ -12,36 +12,32 @@
 #include <net/if.h>
 
 #include "openssl/hmac.h"
+
 #include "modbus/modbus-rtu.h"
+
 #include "libserial/Serial.h"
+
 #include "sqlite3pp/sqlite3pp.h"
-#include "soft_mqtt.h"
+
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/rapidjson.h"
 
+#include "soft_sqlite3pp.h"
+
+#include "MyData.h"
+
+//extern "C" {
+	#include "soft_mqtt.h"
+//}
+
 using std::cout;
 using std::endl;
 using std::string;
-typedef struct _ConnectInfo_t {
-	char location[100] = "cn-shanghai";
+ConnectInfo_t MqttInfo[100];
 
-	char url[100] = "";
-	char port[10] = "1883";
-	char productkey[100] = "a1D8ZmAY7J6";
-	char devicename[100] = "uRiD38Mfbp2mwjocOPrX";
-	char devicesecret[100] = "naEe4i0gmyW7nXqYOBAxBSKKnc0PLNdB";
-	char username[100] = "";
-	char password[100] = "";
-	char clientid[100] = "uRiD38Mfbp2mwjocOPrX&a1D8ZmAY7J6|securemode=3,signmethod=hmacsha1,timestamp=132323232|";
-	char securemode[20] = "securemode=";
-	char signmethod[20] = "signmethod=";
-	char* hmacmd5 = "hmacmd5";
-	char* hmacsha1 = "hmacsha1";
-	char mqttclientid[100] = "";
-}ConnectInfo_t;
-static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
-	unsigned int *ecx, unsigned int *edx)
+static inline void native_cpuid(unsigned int* eax, unsigned int* ebx,
+	unsigned int* ecx, unsigned int* edx)
 {
 	/* ecx is often an input as well as an output. */
 	asm volatile("cpuid"
@@ -51,15 +47,13 @@ static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
 		"=d" (*edx)
 		: "0" (*eax), "2" (*ecx));
 }
+
 int main(int argc, char* argv[])
-{
-	ConnectInfo_t connectinfo;
+{	mqtt_connect("a1D8ZmAY7J6.iot-as-mqtt.cn-shanghai.aliyuncs.com",1883, "clientid|securemode=3,signmethod=hmacsha1|","uRiD38Mfbp2mwjocOPrX&a1D8ZmAY7J6","833CFFC0315466986F5E4B3F051A22A5A1E98435");
 
-	sprintf(connectinfo.url, "tcp://%s.iot-as-mqtt.%s.aliyuncs.com", connectinfo.productkey, connectinfo.location);
-	sprintf(connectinfo.username, "%s&%s", connectinfo.devicename, connectinfo.productkey);
-	sprintf(connectinfo.mqttclientid, "%s|%s%c,%s%s|", connectinfo.clientid, connectinfo.securemode, '3', connectinfo.signmethod, connectinfo.hmacsha1);
+	MySqlite db("test.conf");
+	db.GetCountFromTable("VarParam");
 
-	cout << "url is " << connectinfo.url << endl << "username is " << connectinfo.username << endl << "clientid is " << connectinfo.mqttclientid << endl;
 /**********************************²âÊÔrapidjson************************************/
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -109,23 +103,23 @@ int main(int argc, char* argv[])
 	unsigned char digest[EVP_MAX_MD_SIZE] = { '\0' };
 	unsigned int digest_len = 0;
 //	sprintf(data, "clientId%sdeviceName%sproductKey%s", connectinfo.clientid, connectinfo.devicename, connectinfo.productkey);
-	strcpy(data, connectinfo.mqttclientid);
+//	strcpy(data, connectinfo.mqttclientid);
 	// Using sha1 hash engine here.
 	// You may use other hash engines. e.g EVP_md5(), EVP_sha224, EVP_sha512, etc
-	HMAC(EVP_sha1(), connectinfo.devicesecret, strlen(connectinfo.devicesecret), (unsigned char*)data, strlen(data), digest, &digest_len);
+//	HMAC(EVP_sha1(), connectinfo.devicesecret, strlen(connectinfo.devicesecret), (unsigned char*)data, strlen(data), digest, &digest_len);
 
 	// Be careful of the length of string with the choosen hash engine. SHA1 produces a 20-byte hash value which rendered as 40 characters.
 	// Change the length accordingly with your choosen hash engine
 	char mdString[41] = { '\0' };
 	for (int i = 0; i < 20; i++)
 		sprintf(&mdString[i * 2], "%02x", (unsigned int)digest[i]);
-	strcpy(connectinfo.password, mdString);
+//	strcpy(connectinfo.password, mdString);
 
 /***********************************ÃÜÔ¿¼ÆËã**************************************/
 
 
 /***********************************modbus²âÊÔ**************************************/
-	modbus_t *mb;
+/*	modbus_t *mb;
 	mb = modbus_new_rtu("/dev/ttyS0",115200,'N',8,1);
 	modbus_set_slave(mb, 1);
 	modbus_set_debug(mb, 1);
@@ -136,10 +130,12 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < 10; i++)
 	{
 		cout << buff[i] << endl;
-	}
+	}*/
 /***********************************modbus²âÊÔ**************************************/
-	
-	MyMqtt mqtttest;
-	mqtttest.connect(connectinfo.url, connectinfo.mqttclientid, connectinfo.username, connectinfo.password);
+
+//	mqttc(MqttInfo[0].url, MqttInfo[0].clientid, MqttInfo[0].username, MqttInfo[0].password);
+
+//	MyMqtt mqtttest;
+//	mqtttest.connect(connectinfo.url, connectinfo.mqttclientid, connectinfo.username, connectinfo.password);
 	return 0;
 }

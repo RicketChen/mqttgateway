@@ -248,8 +248,8 @@ namespace sqlite3pp
      public:
       class getstream
       {
-       public:
-        getstream(rows* rws, int idx);
+		public:
+		getstream(rows* rws, int idx);
 
         template <class T>
         getstream& operator >> (T& value) {
