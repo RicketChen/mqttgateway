@@ -9,6 +9,8 @@ typedef struct _DeviceInfo_t {
 	int regedian;			//设备大小端
 	int byteorder;			//设备寄存器高低位
 	char DeviceName[100];	//设备名
+
+	int devcount;
 }DeviceInfo_t;
 
 //端口的参数设置
@@ -23,6 +25,8 @@ typedef struct _PortInfo_t {
 	int StopBits;			//停止位
 	int DelayTime;			//等待时间
 	char PortName[20];		//串口命名
+
+	int portcount;
 }PortInfo_t;
 
 //控制主题相关参数
@@ -61,6 +65,8 @@ typedef struct _ThemeUploadList_t {
 	int DevId;				//绑定的设备信息中的DevInfo的id
 	int VarId;				//绑定变量表VarParam的Id
 	char VarName[100];		//变量名
+
+	int UploadCount;
 }ThemeUploadList_t;
 
 typedef struct _VarParam_t {
@@ -103,7 +109,7 @@ typedef struct _ConnectInfo_t {
 	
 }ConnectInfo_t;
 
-extern ConnectInfo_t MqttInfo[10];
+extern ConnectInfo_t MqttInfo[4];
 extern DeviceInfo_t DevInfo[10];
 extern PortInfo_t PortInfo[10];
 extern ThemeCtrl_t ThemeCtrl[10];

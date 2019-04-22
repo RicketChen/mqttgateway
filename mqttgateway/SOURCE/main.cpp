@@ -28,15 +28,15 @@
 
 #include "MyData.h"
 
-//extern "C" {
-	#include "soft_mqtt.h"
-//}
+//#include "soft_mqtt.h"
+#include "soft_aliyunmqtt.h"
 
+#include "soft_mymodbus.h"
 using std::cout;
 using std::endl;
 using std::string;
 
-ConnectInfo_t MqttInfo[10];
+ConnectInfo_t MqttInfo[4];
 DeviceInfo_t DevInfo[10];
 PortInfo_t PortInfo[10];
 ThemeCtrl_t ThemeCtrl[10];
@@ -44,30 +44,15 @@ ThemeUpload_t ThemeUpload[10];
 ThemeUploadList_t ThemeUploadList[100];
 VarParam_t VarParam[100];
 
-static inline void native_cpuid(unsigned int* eax, unsigned int* ebx,
-	unsigned int* ecx, unsigned int* edx)
-{
-	/* ecx is often an input as well as an output. */
-	asm volatile("cpuid"
-		: "=a" (*eax),
-		"=b" (*ebx),
-		"=c" (*ecx),
-		"=d" (*edx)
-		: "0" (*eax), "2" (*ecx));
-}
-
 int main(int argc, char* argv[])
 {
-	mqtt_connect("a1D8ZmAY7J6.iot-as-mqtt.cn-shanghai.aliyuncs.com",1883, "clientid|securemode=3,signmethod=hmacsha1|","uRiD38Mfbp2mwjocOPrX&a1D8ZmAY7J6","833CFFC0315466986F5E4B3F051A22A5A1E98435");
 
 	MySqlite db("test.conf");
-//	db.GetCountFromTable("VarParam");
 	db.GetAllInfo();
-	for (int i = 0; i < MqttInfo[0].MqttCount; i++)
-	{
-	///	mqtt_connect(MqttParam[i]);
-	}
-//	while (1);
+
+	MyAliyunMqtt Mqtt;
+	Mqtt.openthread();
+
 /**********************************²âÊÔrapidjson************************************/
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -77,26 +62,6 @@ int main(int argc, char* argv[])
 	writer.EndObject();
 	cout << buffer.GetString();
 /**********************************²âÊÔrapidjson************************************/
-
-
-/***********************************¶ÁÈ¡cpuid**************************************/
-	char cpuid[100];
-	FILE* fp_cpuId = popen("sudo cat /sys/class/dmi/id/board_serial", "r");
-
-	fgets(cpuid, sizeof(cpuid), fp_cpuId);
-	pclose(fp_cpuId);
-//	strcpy((char*)clientid.c_str(), cpuid);
-	unsigned eax, ebx, ecx, edx;
-	/* EDIT */
-	eax = 3; /* processor serial number */
-	native_cpuid(&eax, &ebx, &ecx, &edx);
-
-	/** see the CPUID Wikipedia article on which models return the serial
-		number in which registers. The example here is for
-		Pentium III */
-	printf("serial number 0x%08x%08x\n", edx, ecx);
-
-/***********************************¶ÁÈ¡cpuid**************************************/
 
 /***********************************²âÊÔ´®¿Ú**************************************/
 /*	Serial s;
@@ -133,19 +98,12 @@ int main(int argc, char* argv[])
 
 
 /***********************************modbus²âÊÔ**************************************/
-/*	modbus_t *mb;
-	mb = modbus_new_rtu("/dev/ttyS0",115200,'N',8,1);
-	modbus_set_slave(mb, 1);
-	modbus_set_debug(mb, 1);
-	modbus_connect(mb);
 
-	uint16_t buff[10];
-	int regs = modbus_read_registers(mb, 0, 10, buff);
-	for (int i = 0; i < 10; i++)
-	{
-		cout << buff[i] << endl;
-	}*/
 /***********************************modbus²âÊÔ**************************************/
-
+	while (1)
+	{
+		cout << "i am main thread" << endl;
+		sleep(2);
+	}
 	return 0;
 }

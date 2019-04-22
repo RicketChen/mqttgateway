@@ -73,6 +73,7 @@ int MySqlite::GetAllInfo()
 		DevInfo[j].byteorder= (*i).get<int>(6);
 		j++;
 	}
+	DevInfo[0].devcount = j--;
 	j = 0;
 	for (query::iterator i = qryMqttParam.begin(); i != qryMqttParam.end(); ++i)
 	{
@@ -95,7 +96,6 @@ int MySqlite::GetAllInfo()
 		j++;
 	}
 	MqttInfo[0].MqttCount = j--;
-	cout << "mqtt count is " << MqttInfo[0].MqttCount << endl;
 	j = 0; 
 	for (query::iterator i = qryPortParam.begin(); i != qryPortParam.end(); ++i)
 	{
@@ -110,6 +110,7 @@ int MySqlite::GetAllInfo()
 		strcpy(PortInfo[j].Parity, (*i).get<const char*>(6));
 		j++;
 	}
+	PortInfo[0].portcount = j--;
 	j = 0;
 	for (query::iterator i = qryThemeCtrl.begin(); i != qryThemeCtrl.end(); ++i)
 	{
@@ -151,6 +152,7 @@ int MySqlite::GetAllInfo()
 		strcpy(ThemeUploadList[j].VarName, (*i).get<const char*>(6));
 		j++;
 	}
+	ThemeUploadList[0].UploadCount = j--;
 	j = 0;
 	for (query::iterator i = qryVarParam.begin(); i != qryVarParam.end(); ++i)
 	{
@@ -176,5 +178,6 @@ int MySqlite::GetCountFromTable(char* tablename)
 	for (query::iterator i = qry.begin(); i != qry.end(); ++i)
 	{
 		cout << (*i).get<int>(0) << endl;
+		return (*i).get<int>(0);
 	}
 }

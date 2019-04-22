@@ -89,7 +89,8 @@
     <ClCompile Include="LIB\common\sqlite3pp\sqlite3pp.cpp" />
     <ClCompile Include="LIB\common\sqlite3pp\sqlite3ppext.cpp" />
     <ClCompile Include="SOURCE\main.cpp" />
-    <ClCompile Include="SOURCE\soft_mqtt.cpp" />
+    <ClCompile Include="SOURCE\soft_aliyunmqtt.cpp" />
+    <ClCompile Include="SOURCE\soft_mymodbus.cpp" />
     <ClCompile Include="SOURCE\soft_sqlite3pp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -243,16 +244,24 @@
     <ClInclude Include="LIB\gcc\libsqlite3\include\sqlite3.h" />
     <ClInclude Include="LIB\gcc\libsqlite3\include\sqlite3ext.h" />
     <ClInclude Include="SOURCE\MyData.h" />
-    <ClInclude Include="SOURCE\soft_mqtt.h" />
+    <ClInclude Include="SOURCE\soft_aliyunmqtt.h" />
+    <ClInclude Include="SOURCE\soft_mymodbus.h" />
     <ClInclude Include="SOURCE\soft_sqlite3pp.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\x64\Release\test.conf" />
+    <None Include="bin\x64\Release\test.ini" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <LibraryDependencies>modbus;dl;ssl;crypto;sqlite3;iot_hal;iot_sdk;iot_tls;rt;pthread</LibraryDependencies>
+      <LibraryDependencies>modbus;dl;ssl;crypto;sqlite3;iot_sdk;iot_hal;iot_tls;rt;pthread</LibraryDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)mqttgateway\LIB\gcc\libmodbus\lib;$(SolutionDir)mqttgateway\LIB\gcc\libopenssl\lib;$(SolutionDir)mqttgateway\LIB\gcc\libsqlite3\lib;$(SolutionDir)mqttgateway\LIB\gcc\libpaho-mqtt-c\lib;$(SolutionDir)mqttgateway\LIB\gcc\libaliyun\lib</AdditionalLibraryDirectories>
       <AdditionalOptions>-no-pie</AdditionalOptions>
     </Link>
     <ClCompile />
+    <ClCompile>
+      <PreprocessorDefinitions>$(DefaultPlatformToolset)$(PlatformToolset);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
